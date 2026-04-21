@@ -31,6 +31,8 @@ class MainWindow(QMainWindow):
         self.monitor = ProcessMonitor()
         self.monitor.app_detected.connect(self.on_app_detected)
 
+        print(f"[DEBUG] Signal connected")
+
         # Active breaks storage
         self.active_breaks = {}
 
@@ -119,14 +121,31 @@ class MainWindow(QMainWindow):
 
     def on_app_detected(self, app_name, exec_path, pid):
         """Handle detection of a blocked application."""
+        print(f"[DEBUG] on_app_detected: app={app_name}, path={exec_path}, pid={pid}")
         if not self.focus_mode_enabled:
+            print("[DEBUG] Focus mode disabled, ignoring")
             return
         if app_name in self.active_breaks:
+            print(f"[DEBUG] {app_name} is in active_breaks, ignoring")
             return
-        popup = AimfulnessPopup(app_name, exec_path, pid)
-        popup.kill_now.connect(self.kill_process_now)
-        popup.break_requested.connect(self.start_break)
-        popup.show()
+
+        try:
+            print("[DEBUG] Creating AimfulnessPopup...")
+            popup = AimfulnessPopup(app_name, exec_path, pid)
+            print("[DEBUG] Popup created, connecting signals...")
+            popup.kill_now.connect(self.kill_process_now)
+            popup.break_requested.connect(self.start_break)
+            print("[DEBUG] Signals connected, calling popup.show()...")
+            popup.show()
+            print("[DEBUG] popup.show() returned")
+            # Force raise and activate window
+            popup.raise_()
+            popup.activateWindow()
+            print("[DEBUG] popup raised and activated")
+        except Exception as e:
+            print(f"[ERROR] Exception in on_app_detected: {e}")
+            import traceback
+            traceback.print_exc()
 
     def kill_process_now(self, app_name, pid):
         """Terminate a process immediately."""

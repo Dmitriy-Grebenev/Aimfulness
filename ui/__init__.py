@@ -3,3 +3,5 @@
 
 from .focus_popup import AimfulnessPopup
 from .main_window import MainWindow
+
+print(f"[DEBUG POPUP] AimfulnessPopup created")

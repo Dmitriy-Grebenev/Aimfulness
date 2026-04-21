@@ -54,3 +54,7 @@ class AimfulnessPopup(QWidget):
     def on_break(self):
         self.break_requested.emit(self.app_name, self.exec_path)
         self.close()
+    
+    def showEvent(self, event):
+        print(f"[DEBUG POPUP] showEvent called, geometry: {self.geometry().getRect()}")
+        super().showEvent(event)

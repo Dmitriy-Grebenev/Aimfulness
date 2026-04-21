@@ -84,7 +84,7 @@ class ProcessMonitor(QThread):
                         if app_name not in self.break_apps:
                             print(f"[DEBUG MON] Emitting signal for {app_name}")
                             self.app_detected.emit(app_name, proc_exe, str(pid))
-                            print(f"[DEBUG MON] Signal emitted, number of connected receivers: {self.app_detected.receivers(self.app_detected)}")
+                            print(f"[DEBUG MON] Signal emitted")
                         else:
                             print(f"[DEBUG MON] {app_name} is in break_apps, skipping")
                     else:
