@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # main.py
-# Entry point for Aimfulness application
+# Entry point for Aimfulness
 
 import sys
 from PyQt5.QtWidgets import QApplication
-from ui import MainWindow
-
+from ui.main_window import MainWindow
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
