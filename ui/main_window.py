@@ -29,7 +29,11 @@ class MainWindow(QMainWindow):
 
         # Process monitor
         self.monitor = ProcessMonitor()
-        self.monitor.app_detected.connect(self.on_app_detected)
+
+        self.monitor.app_detected.connect(
+            self.on_app_detected,
+            type=Qt.QueuedConnection
+        )
 
         print(f"[DEBUG] Signal connected")
 
