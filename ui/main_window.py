@@ -51,6 +51,9 @@ class MainWindow(QMainWindow):
 
         print("[DEBUG] Monitor thread is running:", self.monitor.isRunning())
 
+        # Scan for apps
+        QTimer.singleShot(1000, self.scan_for_existing_apps)
+
         # Setup UI
         self.setup_ui()
 
@@ -91,24 +94,34 @@ class MainWindow(QMainWindow):
     def toggle_focus_mode(self, enabled):
         """Enable or disable the entire blocking mechanism."""
         self.focus_mode_enabled = enabled
+        
         if not enabled:
             print("[DEBUG] Focus Mode DISABLED. Cleaning up...")
             
-            # 1. Stop all active timers
+            # Stop all timers
             for app_name, info in self.active_breaks.items():
                 timer = info.get('timer')
                 if timer and timer.isActive():
                     timer.stop()
                     print(f"   Stopped timer for {app_name}")
             
-            # 2. Clear dict of active breaks
+            # Clear breaks
             self.active_breaks.clear()
             
-            # 3. Clear in monitor
+            # Clear in monitor
             if hasattr(self.monitor, 'clear_breaks'):
                 self.monitor.clear_breaks()
             
             print("[DEBUG] All timers stopped and break lists cleared.")
+            
+        else:
+            print("[DEBUG] Focus Mode ENABLED. Starting monitor...")
+            self.monitor.start()
+            
+            # Scan already opened apps
+            from PyQt5.QtCore import QTimer
+            QTimer.singleShot(1000, self.scan_for_existing_apps)
+            # 1 second delay for monitor to be opened in time 
 
     def update_monitor_list(self):
         """Update the monitor's blocked list based on current selections."""
@@ -172,6 +185,50 @@ class MainWindow(QMainWindow):
             import traceback
             traceback.print_exc()
 
+    def scan_for_existing_apps(self):
+        """Scan for already running blocked applications."""
+        print("[DEBUG] Scanning for existing blocked apps...")
+        
+        blocked_apps = self.monitor.blocked_apps  # dict {path: name}
+        
+        import psutil
+        
+        for proc in psutil.process_iter(['pid', 'exe', 'name']):
+            try:
+                proc_exe = proc.info['exe']
+                if not proc_exe:
+                    continue
+                
+                # Normalizing path (as in monitor)
+                import os
+                try:
+                    proc_exe = os.path.realpath(proc_exe)
+                except:
+                    pass
+                
+                # Check if process in blocked
+                if proc_exe in blocked_apps:
+                    app_name = blocked_apps[proc_exe]
+                    
+                    # Do not show if already in break
+                    if app_name in self.active_breaks:
+                        continue
+                    
+                    print(f"[DEBUG] Found existing blocked app: {app_name} (PID: {proc.info['pid']})")
+                    
+                    # Show popup with little delay
+                    from PyQt5.QtCore import QTimer
+                    QTimer.singleShot(
+                        500,  # 500 ms between popups
+                        lambda name=app_name, exe=proc_exe, pid=str(proc.info['pid']): 
+                            self.on_app_detected(name, exe, pid)
+                    )
+                    
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+        
+        print("[DEBUG] Scan completed.")
+
     def kill_process_now(self, app_name, pid):
         """Terminate a process immediately."""
         try:
@@ -212,3 +269,4 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         self.monitor.stop()
         event.accept()
+
