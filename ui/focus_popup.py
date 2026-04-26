@@ -44,11 +44,15 @@ class AimfulnessPopup(QWidget):
         icon_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(icon_label)
 
-        label = QLabel(f"⚠️ Distracting application detected:\n\n<b>{self.app_name}</b>")
-        label.setStyleSheet("font-size: 14pt; color: #d4d4d4;")
-        label.setAlignment(Qt.AlignCenter)  
-        layout.addWidget(label)
-        
+        title_label = QLabel("⚠️ Distracting application detected:")
+        title_label.setStyleSheet("font-size: 14pt; color: #d4d4d4;")
+        title_label.setAlignment(Qt.AlignCenter)
+        app_label = QLabel(self.app_name)
+        app_label.setStyleSheet("font-size: 16pt; color: #4ec9b0; font-weight: bold;")
+        app_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(title_label)
+        layout.addWidget(app_label)
+
         # buttons
         btn_layout = QHBoxLayout()
         btn_layout.setSpacing(12)
