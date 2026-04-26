@@ -12,7 +12,6 @@
 - ⏱️ **Smart Breaks**: Cooldown timer per app. Automatically resets when Focus Mode is toggled off/on.
 -  **Instant Scan**: Checks for already running apps on startup and when re-enabling Focus Mode.
 - 🖥️ **Wayland & X11 Ready**: Optimized for GNOME Wayland, with X11 fallback support.
-- 🧠 **Event-Driven Core**: Clean Qt signal/slot architecture. Zero arbitrary delays, zero race conditions.
 
 ---
 
