@@ -29,7 +29,7 @@ QWidget {
     color: #d4d4d4;
     font-family: "Cascadia Code", "Courier New", monospace;
     font-size: 14pt;
-    border-radius: 50px;
+    border-radius: 10px;
 }
 
 QListView {
@@ -43,7 +43,7 @@ QListView {
 QListView::item {
     padding: 8px;
     border-bottom: 1px solid #3c3c3c;
-    border-radius: 50px;
+    border-radius: 5px;
 }
 
 QListView::item:selected {
@@ -71,7 +71,7 @@ QCheckBox::indicator:checked {
 QPushButton {
     background-color: #0e639c;
     border: none;
-    border-radius: 50px;
+    border-radius: 10px;
     padding: 8px 16px;
     font-weight: bold;
 }
@@ -86,7 +86,7 @@ QPushButton:pressed {
 
 QGroupBox {
     border: 1px solid #3c3c3c;
-    border-radius: 20px;
+    border-radius: 10px;
     border-radius: 8px;
     margin-top: 12px;
     padding-top: 8px;
@@ -99,20 +99,43 @@ QGroupBox::title {
 }
 """
 
-# Style for popup window (dark, rounded)
+# Style for popup window 
 POPUP_STYLE = """
-    QWidget {
-        background-color: #2c2c2c;
-        color: #eee;
-        border-radius: 12px;
-        border: 1px solid #4ec9b0;
-    }
-    QPushButton {
-        background-color: #0e639c;
-        border-radius: 50px;
-        padding: 8px 16px;
-    }
-    QPushButton:hover {
-        background-color: #1177bb;
-    }
+QWidget {
+    background-color: #1e1e1e;           
+    color: #d4d4d4;                       
+    font-family: "Cascadia Code", "Courier New", monospace;
+    font-size: 14pt;
+    border-radius: 12px;
+}
+
+QLabel {
+    color: #d4d4d4;
+    font-size: 14pt;
+    qproperty-alignment: AlignCenter;
+    margin: 10px;
+}
+
+QPushButton {
+    background-color: #0e639c;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 24px;                  
+    font-weight: bold;
+    min-width: 120px;                    
+}
+
+QPushButton:hover {
+    background-color: #1177bb;
+}
+
+QPushButton:pressed {
+    background-color: #0a4f7a;
+}
+
+/* Отступы между кнопками */
+QHBoxLayout {
+    spacing: 12px;
+}
 """

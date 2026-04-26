@@ -35,23 +35,33 @@ class AimfulnessPopup(QWidget):
 
     def setup_ui(self):
         layout = QVBoxLayout()
-        layout.setContentsMargins(20, 20, 20, 20)
-
-        label = QLabel(f"Distracting application detected:\n{self.app_name}")
-        label.setStyleSheet("font-size: 14pt;")
+        layout.setContentsMargins(24, 24, 24, 24)  
+        layout.setSpacing(20)                      
+        
+        
+        label = QLabel(f"⚠️ Distracting application detected:\n\n<b>{self.app_name}</b>")
+        label.setStyleSheet("font-size: 14pt; color: #d4d4d4;")
+        label.setAlignment(Qt.AlignCenter)  
         layout.addWidget(label)
-
+        
+        # buttons
         btn_layout = QHBoxLayout()
-        ok_btn = QPushButton("OK")
+        btn_layout.setSpacing(12)
+        
+        ok_btn = QPushButton("Close app")
         ok_btn.clicked.connect(self.on_ok)
+        ok_btn.setMinimumWidth(140)  
+        
         break_btn = QPushButton("Take a break (5 min)")
         break_btn.clicked.connect(self.on_break)
-
+        break_btn.setMinimumWidth(140)
+        
         btn_layout.addWidget(ok_btn)
         btn_layout.addWidget(break_btn)
+        
         layout.addLayout(btn_layout)
-
         self.setLayout(layout)
+        
         self.setStyleSheet(POPUP_STYLE)
         self.adjustSize()
 
