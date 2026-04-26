@@ -73,26 +73,11 @@ All settings are managed in `config.py`:
 | `BREAK_DURATION_SECONDS` | Duration of the break cooldown (default: `300` = 5 min). |
 | `APP_STYLE` / `POPUP_STYLE` | Qt stylesheets for the main window and popup. |
 
-**Adding Apps:**
-Find the executable path:
-```bash
-which gnome-calculator  # Output: /usr/bin/gnome-calculator
-```
-Add to `BLOCKED_APPS` in `config.py`:
-```python
-BLOCKED_APPS = [
-    ('/usr/bin/gnome-calculator', 'Calculator'),
-    ('/usr/bin/telegram-desktop', 'Telegram'),
-    # Add more...
-]
-```
-
 ---
 
 ## 🛠️ Technical Details
 
 - **Process Monitoring**: Runs in a dedicated `QThread` using `psutil`. Normalizes paths via `os.path.realpath()` to handle symlinks, Flatpak, and sandboxes correctly.
-- **Event-Driven UI**: Uses Qt signals/slots (`QueuedConnection`) for thread-safe communication. Zero `time.sleep()` or arbitrary delays.
 - **Wayland Compatibility**: Uses `Qt.Tool | Qt.WindowStaysOnTopHint` and `QTimer.singleShot(0, raise_)` to correctly handle window stacking and focus on Wayland compositors.
 - **State Management**: Break timers and active app states are stored in `self.active_breaks`. Automatically cleared on Focus Mode toggle to prevent state leakage.
 - **Zero-Crash Design**: Handles `psutil.NoSuchProcess` and `AccessDenied` gracefully. Zombie processes and sandboxed apps are safely ignored.
