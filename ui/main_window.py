@@ -131,17 +131,25 @@ class MainWindow(QMainWindow):
 
         try:
             print("[DEBUG] Creating AimfulnessPopup...")
-            popup = AimfulnessPopup(app_name, exec_path, pid)
+            # saving to self for not deleting by GC
+            self.current_popup = AimfulnessPopup(app_name, exec_path, pid)
+            
             print("[DEBUG] Popup created, connecting signals...")
-            popup.kill_now.connect(self.kill_process_now)
-            popup.break_requested.connect(self.start_break)
+            self.current_popup.kill_now.connect(self.kill_process_now)
+            self.current_popup.break_requested.connect(self.start_break)
+            
             print("[DEBUG] Signals connected, calling popup.show()...")
-            popup.show()
+            self.current_popup.show()
+            
+            # for Wayland: wait before raixe_() 
+            from PyQt5.QtCore import QTimer
+            QTimer.singleShot(50, lambda: [
+                self.current_popup.raise_(),
+                self.current_popup.activateWindow()
+            ])
+            
             print("[DEBUG] popup.show() returned")
-            # Force raise and activate window
-            popup.raise_()
-            popup.activateWindow()
-            print("[DEBUG] popup raised and activated")
+            
         except Exception as e:
             print(f"[ERROR] Exception in on_app_detected: {e}")
             import traceback

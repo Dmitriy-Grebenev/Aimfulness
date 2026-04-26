@@ -22,9 +22,14 @@ class AimfulnessPopup(QWidget):
         self.setWindowTitle("Aimfulness")
         
         #self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
-        self.setWindowFlags(Qt.Tool | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
 
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setWindowFlags(
+            Qt.Tool | 
+            Qt.WindowStaysOnTopHint |
+            Qt.FramelessWindowHint
+        )
+
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
         # No modal – just stays on top
         self.setup_ui()
 
