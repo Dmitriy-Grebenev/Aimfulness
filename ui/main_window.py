@@ -92,8 +92,23 @@ class MainWindow(QMainWindow):
         """Enable or disable the entire blocking mechanism."""
         self.focus_mode_enabled = enabled
         if not enabled:
-            # Clear any pending breaks? Optional
-            pass
+            print("[DEBUG] Focus Mode DISABLED. Cleaning up...")
+            
+            # 1. Stop all active timers
+            for app_name, info in self.active_breaks.items():
+                timer = info.get('timer')
+                if timer and timer.isActive():
+                    timer.stop()
+                    print(f"   Stopped timer for {app_name}")
+            
+            # 2. Clear dict of active breaks
+            self.active_breaks.clear()
+            
+            # 3. Clear in monitor
+            if hasattr(self.monitor, 'clear_breaks'):
+                self.monitor.clear_breaks()
+            
+            print("[DEBUG] All timers stopped and break lists cleared.")
 
     def update_monitor_list(self):
         """Update the monitor's blocked list based on current selections."""
@@ -105,8 +120,6 @@ class MainWindow(QMainWindow):
         else:
             self.monitor.update_blocked_list([])
         
-        
-
     def refresh_apps(self):
         """Reload application list from .desktop files, preserving checked state."""
         old_checked = self.model.get_checked_apps()
@@ -172,8 +185,10 @@ class MainWindow(QMainWindow):
         if app_name in self.active_breaks:
             return
         self.monitor.add_break(app_name)
+
         timer = QTimer()
         timer.setSingleShot(True)
+        
         timer.timeout.connect(lambda: self.end_break(app_name, exec_path))
         timer.start(BREAK_DURATION_SECONDS * 1000)
         self.active_breaks[app_name] = {'timer': timer, 'exec_path': exec_path}
@@ -186,6 +201,7 @@ class MainWindow(QMainWindow):
                     proc.terminate()
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
+
         self.monitor.remove_break(app_name)
         self.active_breaks.pop(app_name, None)
 

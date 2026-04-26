@@ -38,7 +38,10 @@ class ProcessMonitor(QThread):
         # Refresh known PIDs when blocked list changes
         self.known_pids = set(psutil.pids())
 
-
+    def clear_breaks(self):
+        """Clears all apps currently on break so they can be detected again."""
+        self.break_apps.clear()
+        print("[DEBUG MON] Break apps cleared.")
 
     def add_break(self, app_name):
         """Add an application to break mode (won't trigger popups)."""
