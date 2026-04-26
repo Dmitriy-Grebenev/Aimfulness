@@ -4,6 +4,16 @@
 import psutil
 from PyQt5.QtCore import QThread, pyqtSignal
 
+import os
+
+def normalize_path(path):
+    """Make path canonical"""
+    try:
+        return os.path.realpath(path)
+    except:
+        return path
+
+
 
 class ProcessMonitor(QThread):
     """
@@ -24,9 +34,11 @@ class ProcessMonitor(QThread):
         Update the list of applications to monitor.
         apps: list of tuples (exec_path, app_name)
         """
-        self.blocked_apps = dict(apps)
+        self.blocked_apps = {normalize_path(path): name for path, name in apps}
         # Refresh known PIDs when blocked list changes
         self.known_pids = set(psutil.pids())
+
+
 
     def add_break(self, app_name):
         """Add an application to break mode (won't trigger popups)."""
@@ -64,6 +76,8 @@ class ProcessMonitor(QThread):
                 try:
                     proc = psutil.Process(pid)
                     proc_exe = proc.exe()
+
+                    proc_exe = normalize_path(proc_exe)
                     
                     if proc_exe in self.blocked_apps:
                         app_name = self.blocked_apps[proc_exe]
@@ -72,29 +86,6 @@ class ProcessMonitor(QThread):
                             self.app_detected.emit(app_name, proc_exe, str(pid))
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     pass
-
-            # for pid in new_pids:
-            #     try:
-            #         proc = psutil.Process(pid)
-            #         proc_exe = proc.exe()
-            #         print(f"[DEBUG MON] Checking PID {pid}: exe={proc_exe}")
-
-            #         # Проверяем, есть ли этот exe в blocked_apps
-            #         if proc_exe in self.blocked_apps:
-            #             app_name = self.blocked_apps[proc_exe]
-            #             print(f"[DEBUG MON] MATCH! {proc_exe} -> {app_name}")
-            #             if app_name not in self.break_apps:
-            #                 print(f"[DEBUG MON] Emitting signal for {app_name}")
-            #                 self.app_detected.emit(app_name, proc_exe, str(pid))
-            #                 print(f"[DEBUG MON] Signal emitted")
-            #             else:
-            #                 print(f"[DEBUG MON] {app_name} is in break_apps, skipping")
-            #         else:
-            #             # Дополнительно: выводим список ключей blocked_apps для сравнения
-            #             if len(self.blocked_apps) > 0:
-            #                 print(f"[DEBUG MON] No match. Blocked keys: {list(self.blocked_apps.keys())}")
-            #     except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
-            #         print(f"  Error: {e} (pid={pid})")
 
             self.known_pids = current_pids
             self.msleep(500)  # Check twice per second

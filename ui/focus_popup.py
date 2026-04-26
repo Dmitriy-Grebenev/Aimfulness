@@ -1,7 +1,7 @@
 # ui/focus_popup.py
 # Popup window that appears when a blocked application is launched
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt5.QtCore import Qt, pyqtSignal
 from config import POPUP_STYLE
 
