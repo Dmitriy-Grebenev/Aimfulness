@@ -29,7 +29,7 @@ class AimfulnessPopup(QWidget):
             Qt.FramelessWindowHint
         )
 
-        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.setAttribute(Qt.WA_TranslucentBackground, False)
         # No modal – just stays on top
         self.setup_ui()
 
@@ -38,7 +38,12 @@ class AimfulnessPopup(QWidget):
         layout.setContentsMargins(24, 24, 24, 24)  
         layout.setSpacing(20)                      
         
-        
+        # icon of warning
+        icon_label = QLabel("🔒")
+        icon_label.setStyleSheet("font-size: 32pt;")
+        icon_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(icon_label)
+
         label = QLabel(f"⚠️ Distracting application detected:\n\n<b>{self.app_name}</b>")
         label.setStyleSheet("font-size: 14pt; color: #d4d4d4;")
         label.setAlignment(Qt.AlignCenter)  
