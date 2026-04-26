@@ -2,6 +2,10 @@
 # main.py
 # Entry point for Aimfulness
 
+import os
+os.environ["QT_QPA_PLATFORM"] = "xcb"  # явно принудительно
+print("QT_QPA_PLATFORM set to:", os.environ.get("QT_QPA_PLATFORM"))
+
 import sys
 from PyQt5.QtWidgets import QApplication
 from ui.main_window import MainWindow
